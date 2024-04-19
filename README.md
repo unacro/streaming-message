@@ -2,7 +2,7 @@
 
 ## 介绍
 
-一个基于 [SSE](https://developer.mozilla.org/zh-CN/docs/Web/API/Server-sent_events) 的消息流 API，用于通过 web 协议实时推送消息。（即 ChatGPT 前端交互的实现）
+一个基于 [SSE](https://developer.mozilla.org/zh-CN/docs/Web/API/Server-sent_events) 的消息流 API，用于通过 web 协议实时推送消息（即 ChatGPT 前端交互的实现）
 
 ## 安装
 
@@ -73,3 +73,7 @@ curl -X POST "$TMP_SSE_API/api/send" \
   -H "Content-Type: application/json" \
   -d '{"token":"your_super_secret_token_here","speaker":"长期素食","data":{"message":"还追！还追！移速七百多还追！！！",from:"curl POST API"},"meta":"custom"}' 
 ```
+
+## Todo
+
+- [ ] 实现独立的会话管理系统，以允许当多个客户端同时存在时，消息互相独立
