@@ -21,17 +21,17 @@ $ npm run start # 突然想起并不能 因为肆无忌惮地使用了 Bun 独�
 
 ### 网页客户端
 
-发送端访问：
-```
-http://localhost:8000/admin
-```
-
 接收端访问：
 ```
 http://localhost:8000/
 ```
 
-在线预览 Demo：[`sse.osrp.run`](https://sse.osrp.run/)
+发送端访问：
+```
+http://localhost:8000/admin
+```
+
+在线预览 Demo：[`sse.osrp.run`](https://sse.osrp.run/)\
 发送端：[`sse.osrp.run/admin`](https://sse.osrp.run/admin)（临时 token 为 `whatever`）
 
 ### 命令行
