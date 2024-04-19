@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Streaming Message Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+  <header>
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div class="sm:flex sm:items-center sm:justify-between">
+        <div class="text-center sm:text-left">
+          <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Streaming Message Test</h1>
+          <p class="mt-1.5 text-sm text-gray-500">Let's send real-time messages easier! 🎉 Powered by <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events" target="_blank"
+              rel="noopener noreferrer">SSE</a></p>
+        </div>
+
+        <div id="badge-box" class="mt-6 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center"></div>
+
+        <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
+          <button
+            class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus:ring"
+            type="button" onClick="SSE.start();return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-sm font-medium"> Connect </span>
+          </button>
+
+          <button
+            class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-5 py-3 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring"
+            type="button" onClick="SSE.clearMessage();return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>
+            <span class="text-sm font-medium"> Clear </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div id="steps" style="display: none;">
+      <h2 class="sr-only">Steps</h2>
+
+      <div
+        class="relative after:absolute after:inset-x-0 after:top-1/2 after:block after:h-0.5 after:-translate-y-1/2 after:rounded-lg after:bg-gray-100">
+        <ol class="relative z-10 flex justify-between text-sm font-medium text-gray-500">
+          <li class="flex items-center gap-2 bg-white p-2">
+            <span class="size-6 rounded-full bg-gray-100 text-center text-[10px]/6 font-bold"> 1 </span>
+
+            <span class="hidden sm:block"> Idle </span>
+          </li>
+
+          <li class="flex items-center gap-2 bg-white p-2">
+            <span class="size-6 rounded-full bg-blue-600 text-center text-[10px]/6 font-bold text-white"> 2 </span>
+
+            <span class="hidden sm:block"> Connecting </span>
+          </li>
+
+          <li class="flex items-center gap-2 bg-white p-2">
+            <span class="size-6 rounded-full bg-gray-100 text-center text-[10px]/6 font-bold"> 3 </span>
+
+            <span class="hidden sm:block"> Listening </span>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto my-4 p-4">
+      <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+        <thead class="ltr:text-left">
+          <tr>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Time</th>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Speaker</th>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Data</th>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Meta</th>
+            <th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="message-box" class="divide-y divide-gray-200">
+
+        </tbody>
+      </table>
+    </div>
+
+    <span class="relative flex justify-center">
+      <div
+        class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75">
+      </div>
+
+      <span class="relative z-10 bg-white px-6"><abbr title="我是有底线的" style="text-decoration: none;">EOF</abbr></span>
+    </span>
+
+  </div>
+
+  <script>
+    class ServerSentEventsClient {
+      static #instance = undefined;
+
+      constructor(eventSourceUrl) {
+        this.statusBadge = document.getElementById("badge-box");
+        this.eventList = document.getElementById("message-box");
+        this.eventSourceUrl = eventSourceUrl ?? "/events";
+        this.eventSource = undefined;
+      }
+
+      static init(eventSourceUrl = undefined) {
+        if (!ServerSentEventsClient.#instance) {
+          ServerSentEventsClient.#instance = new ServerSentEventsClient(eventSourceUrl);
+        }
+        return ServerSentEventsClient.#instance;
+      }
+
+      reconnect(eventSourceUrl = undefined) {
+        this.stop();
+        if (eventSourceUrl) {
+          this.eventSourceUrl = eventSourceUrl;
+        }
+        this.start();
+      }
+
+      addMessage(dataPackage) {
+        const msg = {
+          time: new Date(dataPackage.time).toLocaleString(),
+          speaker: dataPackage.speaker,
+          data: JSON.stringify(dataPackage.data),
+          meta: dataPackage.meta ?? null,
+          status: dataPackage.status,
+        };
+        const newElement = document.createElement("tr");
+        newElement.className = "odd:bg-gray-50";
+        newElement.innerHTML = `<td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">${msg.time}</td>
+<td class="whitespace-nowrap px-4 py-2 text-gray-700">${msg.speaker}</td>
+<td class="whitespace-nowrap px-4 py-2 text-gray-700">${msg.data}</td>
+<td class="whitespace-nowrap px-4 py-2 text-gray-700">${msg.meta}</td>
+<td class="whitespace-nowrap px-4 py-2 text-gray-700">${msg.status}</td>`;
+        if (this.eventList.childElementCount > 20) {
+          this.eventList.removeChild(this.eventList.lastChild);
+        }
+        this.eventList.insertBefore(newElement, this.eventList.firstChild);
+      }
+
+      clearMessage() {
+        this.eventList.innerHTML = "";
+      }
+
+      start() {
+        if (this.eventSource) {
+          return false;
+        }
+        console.log(`Try to connect "${this.eventSourceUrl}"...`);
+        this.eventSource = new EventSource(this.eventSourceUrl); // { withCredentials: true }
+        this.eventSource.onopen = (event) => {
+          console.log("SSE open:", event);
+          const newElement = document.createElement("span");
+          newElement.className =
+            "inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700";
+          newElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+  stroke="currentColor" class="-ms-1 me-1.5 h-4 w-4">
+  <path stroke-linecap="round" stroke-linejoin="round"
+    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+<p class="whitespace-nowrap text-sm"> Live </p>
+<button
+  class="-me-1 ms-1.5 inline-block rounded-full bg-red-200 p-0.5 text-red-700 transition hover:bg-red-300"
+  onClick="SSE.stop();return false;">
+  <span class="sr-only">Remove badge</span>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+    stroke="currentColor" class="h-3 w-3">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+</button>`;
+          this.statusBadge.innerHTML = "";
+          this.statusBadge.appendChild(newElement);
+        }
+        this.eventSource.onerror = (event) => {
+          console.log("SSE error:", event);
+          // console.log("Different code meaning:", Event.AT_TARGET === EventSource.CLOSED)
+          // if (event.eventPhase == EventSource.CLOSED) this.eventSource.close()
+          // Event.NONE (0)、Event.CAPTURING_PHASE (1)、Event.AT_TARGET (2) 和 Event.BUBBLING_PHASE (3)
+          // EventSource.CONNECTING (0)、EventSource.OPEN (1)、EventSource.CLOSED (2)
+          if (event.target.readyState == EventSource.CLOSED) {
+            console.warn("Disconnected");
+            this.stop();
+          } else if (event.target.readyState == EventSource.CONNECTING) {
+            console.log(`Connecting "${this.eventSourceUrl}"...`);
+          }
+        }
+        this.eventSource.onmessage = (event) => {
+          console.log("SSE message:", event);
+          const data = JSON.parse(event.data);
+          console.log(data);
+          this.addMessage(data);
+        };
+
+      }
+
+      stop() {
+        if (this.eventSource) {
+          this.eventSource.close();
+          this.eventSource = undefined;
+        }
+        this.statusBadge.innerHTML = "";
+      }
+    }
+
+    let eventSourceUrl = "/events";
+    // eventSourceUrl = "//see.osrp.run/events";
+    // eventSourceUrl = "//localhost:8000/events";
+    window.SSE = ServerSentEventsClient.init(eventSourceUrl);
+  </script>
+</body>
+
+</html>
