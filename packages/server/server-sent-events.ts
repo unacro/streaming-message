@@ -80,13 +80,10 @@ class ServerSentEvents {
 				async pull(controller: ReadableStreamDirectController) {
 					const clientId: string = Bun.hash(new Date().getTime())
 						.toString(16)
-						.slice(-16)
+						.slice(-8)
 						.toUpperCase(); // todo 是否应该放到 SessionManager 生成？
-					_this.#sessions.addClient(
-						"test_room", // todo 临时调试
-						clientId,
-						controller,
-					);
+					const tempDebugRoomId = "test_room"; // todo 临时调试
+					_this.#sessions.addClient(tempDebugRoomId, clientId, controller);
 					await _this._sendCustomEvent(controller, "meta", {
 						api: {
 							version: "0.5.1",
@@ -95,7 +92,7 @@ class ServerSentEvents {
 					});
 					await _this._sendMessageEvent(controller, {
 						speaker: "Server Notify",
-						data: { message: `Welcome, ${clientId}!` },
+						data: { message: `Welcome, ${clientId}!`, room: tempDebugRoomId },
 						time: new Date().getTime(),
 						meta: "connected",
 						status: "✔ success",
@@ -105,6 +102,7 @@ class ServerSentEvents {
 							speaker: "Server Notify",
 							data: {
 								message: `Hello, ${clientId}!`,
+								room: tempDebugRoomId,
 								mock: btoa(
 									Array.from({ length: 18 }, () =>
 										String.fromCharCode(Math.floor(Math.random() * 94) + 33),
