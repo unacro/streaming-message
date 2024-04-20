@@ -15,7 +15,6 @@ type Room = {
 /**
  * @class SessionManager
  * @description 会话管理系统
- * @todo 独立实现会话管理 依赖注入给服务端调用
  */
 class SessionManager {
 	#db: {
@@ -59,6 +58,7 @@ class SessionManager {
 	}
 
 	removeClient(clientId: string): boolean {
+		console.log(`Client [${clientId}] disconnected.`);
 		if (clientId in this.#db.clients) {
 			delete this.#db.clients[clientId];
 		}

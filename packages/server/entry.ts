@@ -51,8 +51,6 @@ function getResponse(statusCode: number, otherData: object = {}): Response {
 const AvailableToken = [Bun.env.TEMP_AVAILABLE_TOKEN]; // todo 临时调试用
 
 export default {
-	hostname: Bun.env.HOST || "0.0.0.0",
-	port: Bun.env.PORT || 8000,
 	async fetch(req) {
 		const requestUrl = new URL(req.url);
 		if (requestUrl.pathname === "/static/js/sse-client.js") {

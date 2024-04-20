@@ -89,8 +89,8 @@ class ServerSentEvents {
 					);
 					await _this._sendCustomEvent(controller, "meta", {
 						api: {
-							version: "0.5.0",
-							updated_at: "2024-04-20 21:45:18",
+							version: "0.5.1",
+							updated_at: "2024-04-20 23:49:51",
 						},
 					});
 					await _this._sendMessageEvent(controller, {
@@ -123,7 +123,10 @@ class ServerSentEvents {
 				},
 			}),
 			{
-				status: 201,
+				status: 200, // 按理说应该返回 "201 Created" 清晰准确地表达请求结果语义
+				// 但某些弱智客户端实现不认 200 以外的 HTTP 状态码 (点名浏览器和 Hoppscotch)
+				// 学学 curl
+				// curl -vH Accept:text/event-stream "localhost:8000/api/v1/events"
 				headers: {
 					"Content-Type": "text/event-stream",
 					"Cache-Control": "no-cache",
