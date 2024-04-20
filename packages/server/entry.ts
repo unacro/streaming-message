@@ -57,7 +57,10 @@ export default {
 			return new Response(Bun.file("packages/client/public/sse-client.js"));
 		}
 		const requestPaths = requestUrl.pathname.toLowerCase().split("/");
-		if (requestPaths[1] === "api" && requestPaths[2] === "v1") {
+		if (requestPaths[1] === "api") {
+			if (requestPaths[2] !== "v1") {
+				return getResponse(403);
+			}
 			switch (requestPaths[3]) {
 				case "dev":
 					if (Bun.env.NODE_ENV === "production") {
@@ -175,7 +178,7 @@ export default {
 			return new Response(
 				Bun.file("packages/client/public/controller/index.html"),
 			);
-		} else {
+		} else if (!requestPaths[2]) {
 			const roomId = requestPaths[1];
 			if (roomId === "") {
 				// return getResponse(501, { msg: "todo: 访问默认主页" });

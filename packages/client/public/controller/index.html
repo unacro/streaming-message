@@ -59,7 +59,7 @@
       }
       const token = tokenInputElement.value;
       const speaker = speakerInputElement.value;
-      fetch("/api/send", {
+      fetch("/api/v1/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,8 +67,8 @@
         },
         body: JSON.stringify({
           speaker,
-          data: { message },
-          meta: "from admin",
+          data: { message, "verified_by": "Request Header", "from": "Web Admin" },
+          meta: "message",
         }),
       })
         .then((response) => {
