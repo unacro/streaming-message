@@ -1,0 +1,7 @@
+{
+	"name": "streaming-message-client",
+	"version": "0.1.0",
+	"dependencies": {
+		"streaming-message-server": "workspace:*"
+	}
+}

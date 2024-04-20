@@ -61,17 +61,17 @@ curl "${TMP_SSE_API}/api/send/otto?token=${TMP_SSE_TOKEN}&msg=冲！冲刺！"
 
 POST API (verified by header)：
 ```bash
-curl -X POST "$TMP_SSE_API/api/send" \
+curl "$TMP_SSE_API/api/send" \
   -H "Authorization: Bearer ${TMP_SSE_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{"speaker":"♿饲猫棍哥♿","data":{"message":"那我缺的营养这一块谁给我补啊？",from:"curl POST API"},"meta":"custom"}' 
+  -d '{"speaker":"♿饲猫棍哥♿","data":{"message":"那我缺的营养这一块谁给我补啊？","from":"curl POST API"},"meta":"custom"}'
 ```
 
 POST API (verified by body)：
 ```bash
-curl -X POST "$TMP_SSE_API/api/send" \
+curl "$TMP_SSE_API/api/send" \
   -H "Content-Type: application/json" \
-  -d '{"token":"your_super_secret_token_here","speaker":"长期素食","data":{"message":"还追！还追！移速七百多还追！！！",from:"curl POST API"},"meta":"custom"}' 
+  -d '{"token":"your_super_secret_token_here","speaker":"长期素食","data":{"message":"还追！还追！移速七百多还追！！！","from":"curl POST API"},"meta":"custom"}'
 ```
 
 ## Todo
