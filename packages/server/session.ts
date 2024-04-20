@@ -58,14 +58,13 @@ class SessionManager {
 	}
 
 	removeClient(clientId: string): boolean {
-		console.log(`Client [${clientId}] disconnected.`);
 		if (clientId in this.#db.clients) {
 			delete this.#db.clients[clientId];
 		}
-		for (const room of this.#db.rooms) {
-			if (room.clients.includes(clientId)) {
-				room.clients = room.clients.filter(
-					(roomClientId) => roomClientId !== clientId,
+		for (const roomId in this.#db.rooms) {
+			if (this.#db.rooms[roomId].clients.includes(clientId)) {
+				this.#db.rooms[roomId].clients = this.#db.rooms[roomId].clients.filter(
+					(clientIdInRoom) => clientIdInRoom !== clientId,
 				);
 				break;
 			}
